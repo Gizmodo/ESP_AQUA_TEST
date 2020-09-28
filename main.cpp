@@ -1,20 +1,21 @@
 #include <iostream>
-#include "Creator.h"
-#include "ConcreteCreator1.h"
-#include "ConcreteCreator2.h"
+#include "Factory.h"
+#include "ConcreteLamp.h"
+#include "ConcreteCompressor.h"
 
-void ClientCode(const Creator &creator) {
+void ClientCode(const Factory &creator) {
     std::cout << "Client: I'm not aware of the creator's class, but it still works.\n"
               << creator.SomeOperation() << std::endl;
 }
 
+
 int main() {
-    std::cout << "App: Launched with the ConcreteCreator1.\n";
-    Creator *creator = new ConcreteCreator1();
+    std::cout << "App: Launched with the ConcreteLamp.\n";
+    Factory *creator = new ConcreteLamp();
     ClientCode(*creator);
     std::cout << std::endl;
-    std::cout << "App: Launched with the ConcreteCreator2.\n";
-    Creator *creator2 = new ConcreteCreator2();
+    std::cout << "App: Launched with the ConcreteCompressor.\n";
+    Factory *creator2 = new ConcreteCompressor();
     ClientCode(*creator2);
 
     delete creator;
