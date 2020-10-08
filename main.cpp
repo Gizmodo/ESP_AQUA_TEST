@@ -9,4 +9,6 @@ int main() {
     s.setNewPin(32);
     std::cout<<"NePin = "<<+s.getNewPin()<<std::endl;
     vec.push_back(s);
+    s.setState(1,2,3);
+
 }
