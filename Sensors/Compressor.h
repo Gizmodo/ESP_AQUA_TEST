@@ -19,7 +19,8 @@ public:
             AbstractSensor(name, AbstractSensor::compressor, std::move(nameString),
                            pin, hourOn, minuteOn,
                            hourOff, minuteOff,
-                           enabled, state) {};
+                           enabled, state) {
+    };
 
     ~Compressor() = default;
 };

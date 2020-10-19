@@ -1,8 +1,5 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "modernize-use-nodiscard"
-//
-// Created by IT on 15.10.2020.
-//
 
 #ifndef FACTORYMETHOD_ABSTRACTSENSOR_H
 #define FACTORYMETHOD_ABSTRACTSENSOR_H

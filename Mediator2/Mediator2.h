@@ -1,7 +1,3 @@
-//
-// Created by IT on 19.10.2020.
-//
-
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
