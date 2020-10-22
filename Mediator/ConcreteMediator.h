@@ -7,10 +7,16 @@
 #include "Component2.h"
 
 class ConcreteMediator : public Mediator {
+    typedef void (*Action)(Mediator);
 private:
     Component1 *component1_;
     Component2 *component2_;
+    Compressor *compressor_;
 public:
+    ConcreteMediator(Compressor *compressor) : compressor_(compressor) {
+        this->compressor_->setMediator(this);
+    }
+
     ConcreteMediator(Component1 *c1, Component2 *c2) : component1_(c1), component2_(c2) {
         this->component1_->setMediator(this);
         this->component2_->setMediator(this);
@@ -20,11 +26,13 @@ public:
         if (event == "A") {
             std::cout << "Mediator reacts on A and triggers following operations:\n";
             this->component2_->DoC();
-        }
-        if (event == "D") {
+        } else if (event == "D") {
             std::cout << "Mediator reacts on D and triggers following operations:\n";
             this->component1_->DoB();
             this->component2_->DoC();
+        } else {
+            std::cout << "Mediator reacts on:\n";
+
         }
     }
 };

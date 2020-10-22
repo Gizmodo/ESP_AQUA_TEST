@@ -8,7 +8,5 @@ add_executable(FactoryMethod main.cpp Sensors/AbstractSensor.h
         Sensors/Feeder.h Mediator/Mediator.h Mediator/BaseComponent.h
         Mediator/ConcreteMediator.h Mediator/Component1.h Mediator/Component2.h
         Mediator2/Mediator2.h
-        Mediator2/FirstClient.cpp Mediator2/FirstClient.h
-       Mediator2/SecondClient.cpp Mediator2/SecondClient.h
 
         )
