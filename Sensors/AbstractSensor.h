@@ -6,8 +6,11 @@
 
 #include <string>
 #include <utility>
+#include "../Mediator2/Mediator2.h"
 
 class AbstractSensor {
+protected:
+    Mediator2<AbstractSensor> mediator_;
 public:
     enum SensorType {
         light, compressor, co2, doser, feeder
@@ -20,6 +23,24 @@ public:
                    uint8_t hourOn, uint8_t minuteOn,
                    uint8_t hourOff, uint8_t minuteOff,
                    bool enabled, bool state) {
+        _type = type;
+        strcpy(_name, name);
+        _nameString = std::move(nameString);
+        _pin = pin;
+        _hourOn = hourOn;
+        _minuteOn = minuteOn;
+        _hourOff = hourOff;
+        _minuteOff = minuteOff;
+        _enabled = enabled;
+        _state = state;
+    }
+
+    AbstractSensor(Mediator2<AbstractSensor> mediator, const char *name, SensorType type,
+                   std::string nameString, uint8_t pin,
+                   uint8_t hourOn, uint8_t minuteOn,
+                   uint8_t hourOff, uint8_t minuteOff,
+                   bool enabled, bool state) {
+        mediator_ = mediator;
         _type = type;
         strcpy(_name, name);
         _nameString = std::move(nameString);

@@ -4,13 +4,14 @@
 #include <utility>
 
 #include "AbstractSensor.h"
-#include "../Mediator/BaseComponent.h"
 #include "../Mediator2/Mediator2.h"
 
-class Compressor : public AbstractSensor, public BaseComponent {
+class Compressor : public AbstractSensor {
 private:
 //    Mediator2<uint8_t> mediator;
-    Mediator2<AbstractSensor> mediator;
+    Mediator2<AbstractSensor> mediatorAS;
+    Mediator2<Compressor> mediatorC;
+
 //    Mediator2<uint8_t> mediatorUint8t;
 public:
     Compressor(const char *name,
@@ -41,9 +42,24 @@ public:
                            pin, hourOn, minuteOn,
                            hourOff, minuteOff,
                            enabled, state) {
-        this->mediator = mediator;
+        this->mediatorAS = mediator;
     };
 
+    Compressor(Mediator2<Compressor> media, const char *name,
+               std::string nameString,
+               uint8_t pin,
+               uint8_t hourOn,
+               uint8_t minuteOn,
+               uint8_t hourOff,
+               uint8_t minuteOff,
+               bool enabled,
+               bool state) :
+            AbstractSensor(name, AbstractSensor::compressor, std::move(nameString),
+                           pin, hourOn, minuteOn,
+                           hourOff, minuteOff,
+                           enabled, state) {
+        mediatorC = media;
+    };
 
     void set(bool value) {
         this->setState(value);
@@ -54,7 +70,13 @@ public:
     void setWithMediator(bool value) {
         this->setState(value);
         //mediator.Send("3", 9);
-        mediator.Send("3", static_cast<AbstractSensor>(*(this)));
+        mediatorAS.Send("3", static_cast<AbstractSensor>(*(this)));
+    }
+
+    void setWithMediatorC(bool value) {
+        this->setState(value);
+        //mediator.Send("3", 9);
+        mediatorC.Send("3", *this);
     }
 
     /*
