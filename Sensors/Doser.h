@@ -3,9 +3,9 @@
 
 #include <utility>
 
-#include "AbstractSensor.h"
+#include "Sensor.h"
 
-class Doser : public AbstractSensor {
+class Doser : public Sensor {
 private:
     uint8_t _pin_m0;
     uint8_t _pin_m1;
@@ -36,9 +36,9 @@ public:
           uint8_t volume,
           uint8_t index
     ) :
-            AbstractSensor(name, AbstractSensor::doser, std::move(nameString),
-                           pin, hourOn, minuteOn,
-                           enabled, state),
+            Sensor(name, Sensor::doser, std::move(nameString),
+                   pin, hourOn, minuteOn,
+                   enabled, state),
             _pin_m0(pin_m0),
             _pin_m1(pin_m1),
             _pin_m2(pin_m2),

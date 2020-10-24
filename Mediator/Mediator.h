@@ -10,16 +10,16 @@
 #include <string>
 
 template<typename T>
-class Mediator2 {
+class Mediator {
     typedef void (*Action)(T);
 
 private:
     std::multimap<std::string, std::list<Action> > actions;
 
 public:
-    Mediator2() = default;
+    Mediator() = default;
 
-    ~Mediator2() = default;
+    ~Mediator() = default;
 
     void Register(std::string message, Action action) {
         typename std::multimap<std::string, std::list<Action> >::iterator iter_ = actions.find(message);

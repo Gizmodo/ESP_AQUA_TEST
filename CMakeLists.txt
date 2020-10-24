@@ -4,11 +4,11 @@ project(FactoryMethod)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(FactoryMethod main.cpp
-        Sensors/AbstractSensor.h
+        Sensors/Sensor.h
         Sensors/Compressor.h
         Sensors/Light.h
         Sensors/CO2.h
         Sensors/Doser.h
         Sensors/Feeder.h
-        Mediator2/Mediator2.h
+        Mediator/Mediator.h
         )

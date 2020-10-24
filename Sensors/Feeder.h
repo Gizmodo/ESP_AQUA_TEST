@@ -3,9 +3,9 @@
 
 #include <utility>
 
-#include "AbstractSensor.h"
+#include "Sensor.h"
 
-class Feeder : public AbstractSensor {
+class Feeder : public Sensor {
 public:
     Feeder(const char *name,
            std::string nameString,
@@ -14,9 +14,9 @@ public:
            uint8_t minuteOn,
            bool enabled,
            bool state) :
-            AbstractSensor(name, AbstractSensor::feeder, std::move(nameString),
-                           pin, hourOn, minuteOn,
-                           enabled, state) {};
+            Sensor(name, Sensor::feeder, std::move(nameString),
+                   pin, hourOn, minuteOn,
+                   enabled, state) {};
 
     ~Feeder() = default;
 };

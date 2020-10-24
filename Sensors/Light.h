@@ -2,9 +2,9 @@
 #define FACTORYMETHOD_LIGHT_H
 #include <utility>
 
-#include "AbstractSensor.h"
+#include "Sensor.h"
 
-class Light : public AbstractSensor {
+class Light : public Sensor {
 public:
     Light(const char *name,
                std::string nameString,
@@ -15,10 +15,10 @@ public:
                uint8_t minuteOff,
                bool enabled,
                bool state) :
-            AbstractSensor(name, AbstractSensor::light, std::move(nameString),
-                           pin, hourOn, minuteOn,
-                           hourOff, minuteOff,
-                           enabled, state) {};
+            Sensor(name, Sensor::light, std::move(nameString),
+                   pin, hourOn, minuteOn,
+                   hourOff, minuteOff,
+                   enabled, state) {};
 
     ~Light() = default;
 };

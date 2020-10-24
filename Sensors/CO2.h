@@ -3,9 +3,9 @@
 
 #include <utility>
 
-#include "AbstractSensor.h"
+#include "Sensor.h"
 
-class CO2 : public AbstractSensor {
+class CO2 : public Sensor {
 public:
     CO2(const char *name,
         std::string nameString,
@@ -16,10 +16,10 @@ public:
         uint8_t minuteOff,
         bool enabled,
         bool state) :
-            AbstractSensor(name, AbstractSensor::co2, std::move(nameString),
-                           pin, hourOn, minuteOn,
-                           hourOff, minuteOff,
-                           enabled, state) {};
+            Sensor(name, Sensor::co2, std::move(nameString),
+                   pin, hourOn, minuteOn,
+                   hourOff, minuteOff,
+                   enabled, state) {};
 
     ~CO2() = default;
 };
