@@ -11,4 +11,4 @@ add_executable(FactoryMethod main.cpp
         Sensors/Doser.h
         Sensors/Feeder.h
         Mediator/Mediator.h
-        )
+        Sensors/Flow.h Sensors/sensor2.h)

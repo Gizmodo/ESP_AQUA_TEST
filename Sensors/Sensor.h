@@ -13,10 +13,10 @@
 class Sensor {
 public:
     enum SensorType {
-        light, compressor, co2, doser, feeder
+        light, compressor, co2, doser, feeder, flow
     };
 
-    ~Sensor() = default;;
+    ~Sensor() = default;
 
     Sensor(const char *name, SensorType type,
            std::string nameString, uint8_t pin,
@@ -49,6 +49,10 @@ public:
         _minuteOff = -1;
         _enabled = enabled;
         _state = state;
+    }
+
+    char *getName() {
+        return this->_name;
     }
 
     uint8_t getPin() const {
@@ -87,6 +91,38 @@ private:
     bool _state;
     bool _enabled;
 
+protected:
+    void hourOn(uint8_t hour) {
+        this->_hourOn = hour;
+    }
+
+    void minuteOn(uint8_t minute) {
+        this->_minuteOn = minute;
+    }
+
+    void hourOff(uint8_t hour) {
+        this->_hourOff = hour;
+    }
+
+    void minuteOff(uint8_t minute) {
+        this->_minuteOff = minute;
+    }
+
+    void state(bool state) {
+        this->_state = state;
+    }
+
+    void enabled(bool enabled) {
+        this->_enabled = enabled;
+    }
+
+    void type(SensorType type) {
+        this->_type = type;
+    }
+
+    void name(const char *name) {
+        strcpy(_name,name);
+    }
 };
 
 #endif //FACTORYMETHOD_SENSOR_H
