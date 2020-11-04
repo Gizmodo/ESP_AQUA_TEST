@@ -1,14 +1,13 @@
 #include <iostream>
-#include <vector>
+#include <array>
 #include  <charconv>
 #include <memory>
 #include <string>
+#include <stdarg.h>
+#include <cstring>
 #include <stdexcept>
-#include "Sensors/Compressor.h"
-#include "Sensors/Light.h"
 #include "Mediator/Mediator.h"
-#include "Sensors/Flow.h"
-#include "Sensors/sensor2.h"
+#include "Sensors/Sensor.h"
 
 std::string string_format(const std::string fmt_str, ...) {
     int final_n, n = ((int) fmt_str.size()) * 2; /* Reserve two times as much as the length of the fmt_str */
@@ -34,66 +33,65 @@ std::string string_format(const std::string fmt_str, ...) {
 
 #define LIGHTS_COUNT (6)
 
-void callback(Compressor param) {
-    std::cout << "It works with Compressor " << param.getState() << std::endl;
-}
-
-void flowCallback(Flow param) {
-    std::cout << "Обратный вызов по устройству: " << param.getState() << std::endl;
-}
-
-void clb1(sensor2 param) {
+void clb1(Sensor param) {
     std::cout << "clb1 " << param.getName() << std::endl;
 }
 
-void callbackCompressor(sensor2 device) {
+void callbackCompressor(Sensor device) {
     std::cout << "Вызван callback для устройства " << device.getName() << std::endl;
 }
 
-void callbackFlow(sensor2 device) { std::cout << "Вызван callback для устройства " << device.getName() << std::endl; }
+void callbackFlow(Sensor device) { std::cout << "Вызван callback для устройства " << device.getName() << std::endl; }
 
-void callbackPump(sensor2 device) { std::cout << "Вызван callback для устройства " << device.getName() << std::endl; }
+void callbackPump(Sensor device) { std::cout << "Вызван callback для устройства " << device.getName() << std::endl; }
 
-void callbackLight(sensor2 device) { std::cout << "Вызван callback для устройства " << device.getName() << std::endl; }
+void callbackLight(Sensor device) { std::cout << "Вызван callback для устройства " << device.getName() << std::endl; }
 
-void callbackFeeder(sensor2 device) { std::cout << "Вызван callback для устройства " << device.getName() << std::endl; }
+void callbackFeeder(Sensor device) { std::cout << "Вызван callback для устройства " << device.getName() << std::endl; }
 
-void callbackCO2(sensor2 device) { std::cout << "Вызван callback для устройства " << device.getName() << std::endl; }
+void callbackCO2(Sensor device) { std::cout << "Вызван callback для устройства " << device.getName() << std::endl; }
 
-void callbackHeater(sensor2 device) { std::cout << "Вызван callback для устройства " << device.getName() << std::endl; }
+void callbackHeater(Sensor device) { std::cout << "Вызван callback для устройства " << device.getName() << std::endl; }
 
-void callbackDoser(sensor2 device) { std::cout << "Вызван callback для устройства " << device.getName() << std::endl; }
+void callbackDoser(Sensor device) { std::cout << "Вызван callback для устройства " << device.getName() << std::endl; }
 
 //----------------Медиаторы----------------
 //Компрессор
-Mediator<sensor2> medCompressor;
+Mediator<Sensor> medCompressor;
 //Помпа течения
-Mediator<sensor2> medFlow;
+Mediator<Sensor> medFlow;
 //Помпа подъемная
-Mediator<sensor2> medPump;
+Mediator<Sensor> medPump;
 //Прожекторы
-Mediator<sensor2> medLight;
+Mediator<Sensor> medLight;
 //Кормушка
-//TODO сменить класс sensor2 на определенный класс данного устройства
-Mediator<sensor2> medFeeder;
+//TODO сменить класс Sensor на определенный класс данного устройства
+Mediator<Sensor> medFeeder;
 //CO2
-Mediator<sensor2> medCO2;
+Mediator<Sensor> medCO2;
 //Нагреватель
-Mediator<sensor2> medHeater;
+Mediator<Sensor> medHeater;
 //Дозатор
-//TODO сменить класс sensor2 на определенный класс данного устройства
-Mediator<sensor2> medDoser;
+//TODO сменить класс Sensor на определенный класс данного устройства
+Mediator<Sensor> medDoser;
 
 //-----------------------------------------
 //Датчики
-sensor2 *compressor;
-sensor2 *flow;
-sensor2 *pump;
-std::vector<sensor2 *> lights;
-sensor2 *feeder;
-sensor2 *co2;
-sensor2 *heater;
-sensor2 *doser;
+Sensor *compressor;
+Sensor *flow;
+Sensor *pump;
+std::array<Sensor, LIGHTS_COUNT> lights{
+        Sensor(medLight, "1", Sensor::light),
+        Sensor(medLight, "2", Sensor::light),
+        Sensor(medLight, "3", Sensor::light),
+        Sensor(medLight, "4", Sensor::light),
+        Sensor(medLight, "5", Sensor::light),
+        Sensor(medLight, "6", Sensor::light)
+                                         };
+Sensor *feeder;
+Sensor *co2;
+Sensor *heater;
+Sensor *doser;
 
 //-----------------------------------------
 void initMediators() {
@@ -108,26 +106,28 @@ void initMediators() {
 }
 
 void initDevices() {
-    compressor = new sensor2(medCompressor, "Компрессор", sensor2::compressor);
-    flow = new sensor2(medFlow, "Помпа течения", sensor2::flow);
-    pump = new sensor2(medPump, "Помпа подъёмная", sensor2::pump);
-    feeder = new sensor2(medFeeder, "Кормушка", sensor2::feeder);
-    co2 = new sensor2(medCO2, "CO2", sensor2::co2);
-    heater = new sensor2(medHeater, "Нагреватель", sensor2::heater);
-    doser = new sensor2(medDoser, "Дозатор", sensor2::doser);
+    compressor = new Sensor(medCompressor, "Компрессор", Sensor::compressor);
+    flow = new Sensor(medFlow, "Помпа течения", Sensor::flow);
+    pump = new Sensor(medPump, "Помпа подъёмная", Sensor::pump);
+    feeder = new Sensor(medFeeder, "Кормушка", Sensor::feeder);
+    co2 = new Sensor(medCO2, "CO2", Sensor::co2);
+    heater = new Sensor(medHeater, "Нагреватель", Sensor::heater);
+    doser = new Sensor(medDoser, "Дозатор", Sensor::doser);
     for (int i = 0; i < LIGHTS_COUNT; ++i) {
-        std::string buffer;
-        buffer = string_format("%s %d", "Прожектор", i + 1);
-        lights.push_back(new sensor2(medLight, buffer, sensor2::light));
+        std::string buffer= string_format("%s %d", "Прожектор", i + 1);
+        auto item=lights.at(i);
+        std::cout<<"Before "<<item.getName()<<std::endl;
+        item.setName(buffer);
+        std::cout<<"After "<<item.getName()<<std::endl;
     }
 /*
-    compressor = new sensor2(medCompressor, FLOW_NAME, sensor2::flow, "1",
+    compressor = new Sensor(medCompressor, FLOW_NAME, Sensor::flow, "1",
                              1, 2, 3, 4, 5, true, false);
     compressor->callMediator();
     */
 }
 
-void printDevice(sensor2 *device) {
+void printDevice(Sensor *device) {
     std::cout << device->printDevice() << std::endl;
 }
 
@@ -139,12 +139,12 @@ void printAllDevices() {
     printDevice(co2);
     printDevice(heater);
     printDevice(doser);
-    for(auto light:lights){
+  /*  for(auto light:lights){
         printDevice(light);
-    }
+    }*/
 }
 
-void setupDevice(sensor2 *device) {
+void setupDevice(Sensor *device) {
     const char *on = "7:28";
     const char *off = "17:43";
     uint8_t _pin = 12;
@@ -159,7 +159,7 @@ void setupDevice(sensor2 *device) {
     device->setObjectID(objectID);
 };
 //присвоение параметров всем прожекторам
-void setupDevice(sensor2* device,const std::string& response){
+void setupDevice(Sensor* device, const std::string& response){
 
 }
 
@@ -177,21 +177,30 @@ void setupDevices() {
 int main() {
     initMediators();
     initDevices();
+    std::cout<<"BEGIN "<<std::endl;
+    for (int i = 0; i < LIGHTS_COUNT; ++i) {
+        std::string buffer= string_format("%s %d", "Прожектор", i + 1);
+        auto item=lights.at(i);
+        std::cout<<"Before "<<item.getName()<<std::endl;
+        item.setName(buffer);
+        std::cout<<"After "<<item.getName()<<std::endl;
+    }
+    std::cout<<"END "<<std::endl;
     setupDevices();
     flow->callMediator();
     //printAllDevices();
 /*
     std::vector<Sensor> devices;
 
-    Mediator<sensor2> mediator1;
+    Mediator<Sensor> mediator1;
     mediator1.Register("1", clb1);
-    sensor2 s1 = sensor2(mediator1, FLOW_NAME, sensor2::flow,
+    Sensor s1 = Sensor(mediator1, FLOW_NAME, Sensor::flow,
                          1, 2, 3, 4, 5, true, false);
     s1.callMediator();
 
-    Mediator<sensor2> mediator2;
+    Mediator<Sensor> mediator2;
     mediator2.Register("1", clb1);*/
-    /*  sensor2 s2 = sensor2(mediator2, DOSER_NAME, sensor2::flow,
+    /*  Sensor s2 = Sensor(mediator2, DOSER_NAME, Sensor::flow,
                            1, 2, 3, 4, 5, true, false);
       s2.callMediator();
       s2.callMediator();*/
