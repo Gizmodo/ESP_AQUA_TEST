@@ -116,9 +116,11 @@ void initDevices() {
     for (int i = 0; i < LIGHTS_COUNT; ++i) {
         std::string buffer= string_format("%s %d", "Прожектор", i + 1);
         auto item=lights.at(i);
-        std::cout<<"Before "<<item.getName()<<std::endl;
+        std::cout<<"Before "<<item.getName()<<" PIN "<<+item.getPin()<<std::endl;
         item.setName(buffer);
-        std::cout<<"After "<<item.getName()<<std::endl;
+        item.setPin(i);
+        std::cout<<"After "<<item.getName()<<" PIN "<<+item.getPin()<<std::endl;
+        lights.at(i)=item;
     }
 /*
     compressor = new Sensor(medCompressor, FLOW_NAME, Sensor::flow, "1",
@@ -157,7 +159,7 @@ void setupDevice(Sensor *device) {
     device->setState(state);
     device->setEnabled(enabled);
     device->setObjectID(objectID);
-};
+}
 //присвоение параметров всем прожекторам
 void setupDevice(Sensor* device, const std::string& response){
 
@@ -177,15 +179,16 @@ void setupDevices() {
 int main() {
     initMediators();
     initDevices();
-    std::cout<<"BEGIN "<<std::endl;
+    std::cout<<"-------------------------BEGIN "<<std::endl;
     for (int i = 0; i < LIGHTS_COUNT; ++i) {
         std::string buffer= string_format("%s %d", "Прожектор", i + 1);
         auto item=lights.at(i);
-        std::cout<<"Before "<<item.getName()<<std::endl;
+        std::cout<<"Before "<<item.getName()<<" PIN "<<+item.getPin()<<std::endl;
         item.setName(buffer);
-        std::cout<<"After "<<item.getName()<<std::endl;
+        item.setPin(i);
+        std::cout<<"After "<<item.getName()<<" PIN "<<+item.getPin()<<std::endl;
     }
-    std::cout<<"END "<<std::endl;
+    std::cout<<"-------------------------END "<<std::endl;
     setupDevices();
     flow->callMediator();
     //printAllDevices();
