@@ -2,6 +2,7 @@
 #define FACTORYMETHOD_SENSOR_H
 
 #include <string>
+#include <cstring>
 #include <utility>
 #include "../Mediator/Mediator.h"
 
@@ -19,6 +20,7 @@ public:
         mMediator = mediator;
         _type = type;
         _name = name;
+
     }
 
     Sensor(Mediator<Sensor> mediator, const char *name, SensorType type,
@@ -77,7 +79,7 @@ public:
     }
 
     void setName(std::string name) {
-        this->_name = name;
+        this->_name = std::move(name);
     }
 
     std::string getName() {

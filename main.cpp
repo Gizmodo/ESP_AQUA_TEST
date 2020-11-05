@@ -6,8 +6,11 @@
 #include <stdarg.h>
 #include <cstring>
 #include <stdexcept>
+#include <random>
+#include <cassert>
 #include "Mediator/Mediator.h"
 #include "Sensors/Sensor.h"
+#include "Sensors/Scheduler.h"
 
 std::string string_format(const std::string fmt_str, ...) {
     int final_n, n = ((int) fmt_str.size()) * 2; /* Reserve two times as much as the length of the fmt_str */
@@ -31,7 +34,8 @@ std::string string_format(const std::string fmt_str, ...) {
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
 
-#define LIGHTS_COUNT (6)
+#define LIGHTS_COUNT (6)             // Кол-во прожекторов
+#define DEVICE_COUNT (LIGHTS_COUNT)  // Кол-во всех устройств (нужно для Alarm'ов)
 
 void clb1(Sensor param) {
     std::cout << "clb1 " << param.getName() << std::endl;
@@ -87,11 +91,36 @@ std::array<Sensor, LIGHTS_COUNT> lights{
         Sensor(medLight, "4", Sensor::light),
         Sensor(medLight, "5", Sensor::light),
         Sensor(medLight, "6", Sensor::light)
-                                         };
+};
+std::array<Scheduler, DEVICE_COUNT> schedulesArray;
 Sensor *feeder;
 Sensor *co2;
 Sensor *heater;
 Sensor *doser;
+struct PRNG {
+    std::mt19937 engine;
+};
+PRNG generator;
+
+void initGenerator(PRNG &generator) {
+    // Создаём псевдо-устройство для получения случайного зерна.
+    std::random_device device;
+    // Получаем случайное зерно последовательности
+    generator.engine.seed(device());
+}
+
+// Генерирует целое число в диапазоне [minValue, maxValue)
+unsigned random(PRNG &generator, unsigned minValue, unsigned maxValue) {
+    // Проверяем корректность аргументов
+    assert(minValue < maxValue);
+
+    // Создаём распределение
+    std::uniform_int_distribution<unsigned> distribution(minValue, maxValue);
+
+    // Вычисляем псевдослучайное число: вызовем распределение как функцию,
+    //  передав генератор произвольных целых чисел как аргумент.
+    return distribution(generator.engine);
+}
 
 //-----------------------------------------
 void initMediators() {
@@ -114,13 +143,25 @@ void initDevices() {
     heater = new Sensor(medHeater, "Нагреватель", Sensor::heater);
     doser = new Sensor(medDoser, "Дозатор", Sensor::doser);
     for (int i = 0; i < LIGHTS_COUNT; ++i) {
-        std::string buffer= string_format("%s %d", "Прожектор", i + 1);
-        auto item=lights.at(i);
-        std::cout<<"Before "<<item.getName()<<" PIN "<<+item.getPin()<<std::endl;
+        std::string buffer = string_format("%s %d", "Прожектор", i + 1);
+        std::string on = string_format("%02d:%02d",
+                                       random(generator, 0, 24),
+                                       random(generator, 0, 59));
+        std::string off = string_format("%02d:%02d",
+                                        random(generator, 0, 24),
+                                        random(generator, 0, 59));
+
+        auto item = lights.at(i);
         item.setName(buffer);
-        item.setPin(i);
-        std::cout<<"After "<<item.getName()<<" PIN "<<+item.getPin()<<std::endl;
-        lights.at(i)=item;
+        item.setPin(random(generator, 0, 20));
+        item.setTimeOff(off.c_str());
+        item.setTimeOn(on.c_str());
+        lights.at(i) = item;
+        schedulesArray.at(i).setDevice(&(lights.at(i)));
+    }
+    for (auto item: schedulesArray) {
+        Sensor *dev = item.getDevice();
+        std::cout << dev->printDevice() << std::endl;
     }
 /*
     compressor = new Sensor(medCompressor, FLOW_NAME, Sensor::flow, "1",
@@ -141,9 +182,9 @@ void printAllDevices() {
     printDevice(co2);
     printDevice(heater);
     printDevice(doser);
-  /*  for(auto light:lights){
-        printDevice(light);
-    }*/
+    /*  for(auto light:lights){
+          printDevice(light);
+      }*/
 }
 
 void setupDevice(Sensor *device) {
@@ -152,7 +193,7 @@ void setupDevice(Sensor *device) {
     uint8_t _pin = 12;
     bool state = false;
     bool enabled = false;
-    std::string objectID="qwdqwdefew";
+    std::string objectID = "qwdqwdefew";
     device->setTimeOn(on);
     device->setTimeOff(off);
     device->setPin(_pin);
@@ -160,8 +201,9 @@ void setupDevice(Sensor *device) {
     device->setEnabled(enabled);
     device->setObjectID(objectID);
 }
+
 //присвоение параметров всем прожекторам
-void setupDevice(Sensor* device, const std::string& response){
+void setupDevice(Sensor *device, const std::string &response) {
 
 }
 
@@ -177,18 +219,17 @@ void setupDevices() {
 }
 
 int main() {
+
+    initGenerator(generator);
+
     initMediators();
     initDevices();
-    std::cout<<"-------------------------BEGIN "<<std::endl;
+    std::cout << "-------------------------BEGIN " << std::endl;
     for (int i = 0; i < LIGHTS_COUNT; ++i) {
-        std::string buffer= string_format("%s %d", "Прожектор", i + 1);
-        auto item=lights.at(i);
-        std::cout<<"Before "<<item.getName()<<" PIN "<<+item.getPin()<<std::endl;
-        item.setName(buffer);
-        item.setPin(i);
-        std::cout<<"After "<<item.getName()<<" PIN "<<+item.getPin()<<std::endl;
+        auto item = lights.at(i);
+        std::cout << "After " << item.getName() << " PIN " << +item.getPin() << std::endl;
     }
-    std::cout<<"-------------------------END "<<std::endl;
+    std::cout << "-------------------------END " << std::endl;
     setupDevices();
     flow->callMediator();
     //printAllDevices();
