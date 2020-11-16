@@ -23,6 +23,11 @@ public:
 
     }
 
+    Sensor(std::string name, SensorType type) {
+        _name = std::move(name);
+        _type = type;
+    }
+
     Sensor(Mediator<Sensor> mediator, const char *name, SensorType type,
            uint8_t pin,
            uint8_t hourOn, uint8_t minuteOn,
@@ -38,6 +43,10 @@ public:
         _minuteOff = minuteOff;
         _enabled = enabled;
         _state = state;
+    }
+
+    void setMMediator(const Mediator<Sensor> &mMediator) {
+        Sensor::mMediator = mMediator;
     }
 
     void setStateNotify(bool state) {
@@ -144,6 +153,9 @@ private:
     bool _state = false;
     bool _enabled = false;
     Mediator<Sensor> mMediator;
+
+
+private:
 
     void splitTime(const char *payload, uint8_t &hour, uint8_t &minute) {
         char buffer[10];

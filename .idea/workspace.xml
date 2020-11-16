@@ -12,11 +12,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="684731fc-bba3-4d31-8aa0-1a5bd8869185" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/serialmonitor_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Sensors/Scheduler.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Sensors/Scheduler.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Sensors/Doser.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Sensors/Scheduler.h" beforeDir="false" afterPath="$PROJECT_DIR$/Sensors/Scheduler.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Sensors/Sensor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Sensors/Sensor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
@@ -50,14 +49,10 @@
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="restartRequiresConfirmation" value="false" />
   </component>
   <component name="RunManager">
     <configuration name="FactoryMethod" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FactoryMethod" TARGET_NAME="FactoryMethod" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="FactoryMethod" RUN_TARGET_NAME="FactoryMethod">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -78,6 +73,19 @@
       <updated>1604529753224</updated>
       <workItem from="1604529759159" duration="1689000" />
       <workItem from="1604609133271" duration="2912000" />
+      <workItem from="1604692137604" duration="358000" />
+      <workItem from="1604786317275" duration="2799000" />
+      <workItem from="1604871951661" duration="76000" />
+      <workItem from="1604939881178" duration="599000" />
+      <workItem from="1605035497146" duration="1380000" />
+      <workItem from="1605037898100" duration="743000" />
+      <workItem from="1605041399709" duration="2634000" />
+      <workItem from="1605046332037" duration="724000" />
+      <workItem from="1605132230941" duration="12000" />
+      <workItem from="1605475153163" duration="2810000" />
+      <workItem from="1605518246867" duration="1234000" />
+      <workItem from="1605563314539" duration="108000" />
+      <workItem from="1605563459929" duration="1339000" />
     </task>
     <servers />
   </component>
@@ -94,14 +102,23 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/main.cpp</url>
+          <line>299</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <watches-manager>
       <configuration name="CMakeRunConfiguration">
-        <watch expression="&amp;lights.at(i)" language="ObjectiveC" />
-        <watch expression="&amp;item" language="ObjectiveC" />
-        <watch expression="schedulesArray.at(i)" language="ObjectiveC" />
-        <watch expression="schedulesArray.at(i).getDevice()" language="ObjectiveC" />
+        <watch expression="flow" language="ObjectiveC" />
+        <watch expression="lights.at(1)" language="ObjectiveC" />
+        <watch expression="co2" language="ObjectiveC" />
       </configuration>
     </watches-manager>
   </component>

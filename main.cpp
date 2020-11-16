@@ -8,9 +8,11 @@
 #include <stdexcept>
 #include <random>
 #include <cassert>
+#include <ctime>
 #include "Mediator/Mediator.h"
 #include "Sensors/Sensor.h"
 #include "Sensors/Scheduler.h"
+#include "Sensors/Doser.h"
 
 std::string string_format(const std::string fmt_str, ...) {
     int final_n, n = ((int) fmt_str.size()) * 2; /* Reserve two times as much as the length of the fmt_str */
@@ -36,6 +38,7 @@ std::string string_format(const std::string fmt_str, ...) {
 
 #define LIGHTS_COUNT (6)             // Кол-во прожекторов
 #define DEVICE_COUNT (LIGHTS_COUNT)  // Кол-во всех устройств (нужно для Alarm'ов)
+#define DOSERS_COUNT (3)
 
 void clb1(Sensor param) {
     std::cout << "clb1 " << param.getName() << std::endl;
@@ -59,6 +62,10 @@ void callbackHeater(Sensor device) { std::cout << "Вызван callback для 
 
 void callbackDoser(Sensor device) { std::cout << "Вызван callback для устройства " << device.getName() << std::endl; }
 
+void callbackDoser(Doser device) {
+    std::cout << "Вызван callback для устройства " << device.getName() << std::endl;
+}
+
 //----------------Медиаторы----------------
 //Компрессор
 Mediator<Sensor> medCompressor;
@@ -78,7 +85,7 @@ Mediator<Sensor> medHeater;
 //Дозатор
 //TODO сменить класс Sensor на определенный класс данного устройства
 Mediator<Sensor> medDoser;
-
+Mediator<Doser> medDoser_;
 //-----------------------------------------
 //Датчики
 Sensor *compressor;
@@ -92,7 +99,12 @@ std::array<Sensor, LIGHTS_COUNT> lights{
         Sensor(medLight, "5", Sensor::light),
         Sensor(medLight, "6", Sensor::light)
 };
-std::array<Scheduler, DEVICE_COUNT> schedulesArray;
+std::array<Doser, DOSERS_COUNT> dosers{Doser(medDoser_, "Fe", Doser::Fe),
+                                       Doser(medDoser_, "K", Doser::K),
+                                       Doser(medDoser_, "NP", Doser::NP)};
+std::array<Scheduler, DEVICE_COUNT> schedules;
+std::array<Scheduler, 3> schedulesDosers;
+
 Sensor *feeder;
 Sensor *co2;
 Sensor *heater;
@@ -132,6 +144,27 @@ void initMediators() {
     medCO2.Register("1", callbackCO2);
     medHeater.Register("1", callbackHeater);
     medDoser.Register("1", callbackDoser);
+    medDoser_.Register("1", callbackDoser);
+}
+
+void printSheduler() {
+    std::cout << "Schedules doesnt print alarms ID" << std::endl;
+    std::cout << "--------------Печать расписаний--------------" << std::endl;
+    time_t now1 = time(nullptr);
+    tm *ptm = std::localtime(&now1);
+    char buffer[100];
+    strftime(buffer, 100, "Internal time is %d.%m.%Y %H:%M:%S", ptm);
+    std::cout << buffer << std::endl;
+
+    for (auto item : schedules) {
+        std::cout << "Sensor name ";
+        std::cout << item.getDevice()->getName().c_str() << std::endl;
+        auto alarmNowOn = item.getOn();
+        auto alarmNowOff = item.getOff();
+        std::cout << "alarmNowOn " << +alarmNowOn << std::endl;
+        std::cout << "alarmNowOff " << +alarmNowOff << std::endl;
+        std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl;
+    }
 }
 
 void initDevices() {
@@ -156,18 +189,50 @@ void initDevices() {
         item.setPin(random(generator, 0, 20));
         item.setTimeOff(off.c_str());
         item.setTimeOn(on.c_str());
+        item.setMMediator(medLight);
         lights.at(i) = item;
-        schedulesArray.at(i).setDevice(&(lights.at(i)));
+        schedules.at(i).setDevice(&(lights.at(i)));
+        schedules.at(i).setOn(10);
+        schedules.at(i).setOff(20);
     }
-    for (auto item: schedulesArray) {
-        Sensor *dev = item.getDevice();
+    for (int i = 0; i < DOSERS_COUNT; ++i) {
+        std::string buffer = string_format("%s %d", "Дозатор", i + 1);
+        std::string on = string_format("%02d:%02d",
+                                       random(generator, 0, 24),
+                                       random(generator, 0, 59));
+        std::string off = string_format("%02d:%02d",
+                                        random(generator, 0, 24),
+                                        random(generator, 0, 59));
+
+        auto item = dosers.at(i);
+        item.setName(buffer);
+        item.setSteps(random(generator,10,50));
+        item.setMediator(medDoser_);
+        dosers.at(i) = item;
+        schedulesDosers.at(i).setDevice(&(dosers.at(i)));
+
+    }
+    std::cout << "Schedules should print alarms ID" << std::endl;
+    for (auto item: schedules) {
+        auto dev = item.getDevice();
         std::cout << dev->printDevice() << std::endl;
+        std::cout << "Schedules>>>>>>>>>>>>>>>";
+        std::cout << "sensor name ";
+        std::cout << item.getDevice()->getName().c_str() << std::endl;
+        auto alarmNowOn = item.getOn();
+        auto alarmNowOff = item.getOff();
+        std::cout << "alarmNowOn " << +alarmNowOn << std::endl;
+        std::cout << "alarmNowOff " << +alarmNowOff << std::endl;
+        std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl;
+        //Doser* dos = static_cast<Doser *>(item.getDevice());
+
     }
-/*
-    compressor = new Sensor(medCompressor, FLOW_NAME, Sensor::flow, "1",
-                             1, 2, 3, 4, 5, true, false);
-    compressor->callMediator();
-    */
+    std::cout<<"TEST"<<std::endl;
+    for (auto item: schedulesDosers) {
+        auto dos =static_cast<Doser *>(item.getDevice());
+        std::cout<<dos->getName()<<" steps "<<+dos->getSteps()<<std::endl;
+    }
+
 }
 
 void printDevice(Sensor *device) {
@@ -231,7 +296,11 @@ int main() {
     }
     std::cout << "-------------------------END " << std::endl;
     setupDevices();
+    printSheduler();
     flow->callMediator();
+    std::cout<<dosers.at(1).getEnabled()<<std::endl;
+    dosers.at(1).setEnable(true);
+    std::cout<<dosers.at(1).getEnabled()<<std::endl;
     //printAllDevices();
 /*
     std::vector<Sensor> devices;

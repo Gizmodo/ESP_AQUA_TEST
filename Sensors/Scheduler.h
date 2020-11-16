@@ -6,12 +6,14 @@
 #define AQUACONTROLLER_ESP8266_SCHEDULER_H
 
 #include "Sensor.h"
+#include "Doser.h"
 
 typedef uint8_t AlarmID_t;
 
 class Scheduler {
 private:
     Sensor *_device = nullptr;
+    //Doser *_doser = nullptr;
     AlarmID_t _on;
     AlarmID_t _off;
 
